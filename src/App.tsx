@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
@@ -6,9 +6,27 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+  const hasReachedGoal = count >= 10
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = isDarkMode ? 'dark' : 'light'
+  }, [isDarkMode])
 
   return (
     <>
+      <button
+        type="button"
+        className="theme-toggle"
+        aria-pressed={isDarkMode}
+        onClick={() => setIsDarkMode((value) => !value)}
+      >
+        <span className="theme-toggle__track" aria-hidden="true">
+          <span className="theme-toggle__thumb"></span>
+        </span>
+        {isDarkMode ? 'Dark mode' : 'Light mode'}
+      </button>
+
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
@@ -24,10 +42,14 @@ function App() {
         <button
           type="button"
           className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          disabled={hasReachedGoal}
+          onClick={() => setCount((count) => Math.min(count + 1, 10))}
         >
           Count is {count}
         </button>
+        {hasReachedGoal && (
+          <p className="goal-message">목표에 도달했습니다.</p>
+        )}
       </section>
 
       <div className="ticks"></div>
